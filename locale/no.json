@@ -1,0 +1,367 @@
+{
+    "$meta": {
+        "label": "Norwegian (Bokmaal)",
+        "humanizer_language": "no"
+    },
+    "restarter": {
+        "server_unhealthy_kick_reason": "serveren trenger en restart, vennligst koble til på nytt",
+        "partial_hang_warn": "Grunnet en teknisk feil (partial hang) vil serveren restartes om 1 minutt. Vennligst koble fra serveren umiddelbart.",
+        "partial_hang_warn_discord": "Grunnet en teknisk feil (partial hang) vil **%{servername}** restartes om 1 minutt.",
+        "schedule_reason": "planlagt restart kl. %{time}",
+        "schedule_warn": "Serveren har en planlagt restart om %{smart_count} minutt. Vennligst koble fra serveren. |||| Serveren har en planlagt restart om %{smart_count} minutter.",
+        "schedule_warn_discord": "**%{servername}** har en planlagt restart om %{smart_count} minutter. |||| **%{servername}** har en planlagt restart om %{smart_count} minutter."
+    },
+    "kick_messages": {
+        "everyone": "Alle spillere ble sparket ut: %{reason}.",
+        "player": "Du har blitt sparket ut: %{reason}.",
+        "unknown_reason": "av en ukjent grunn"
+    },
+    "ban_messages": {
+        "kick_temporary": "(%{author}) Du har blitt utestengt fra denne serveren grunnet \"%{reason}\". Utestengelsen din oppheves om: %{expiration}.",
+        "kick_permanent": "(%{author}) Du har blitt permanent utestengt fra denne serveren grunnet \"%{reason}\".",
+        "reject": {
+            "title_permanent": "Du har blitt permanent utestengt fra denne serveren.",
+            "title_temporary": "Du har blitt midlertidig utestengt fra denne serveren.",
+            "label_expiration": "Din utestengelse vil oppheves om",
+            "label_date": "Dato for Utestengelse",
+            "label_author": "Utestengt av",
+            "label_reason": "Grunnlag for Utestengelsen",
+            "label_id": "Utestengelse ID",
+            "note_multiple_bans": "NB: du har flere aktive utestengelser.",
+            "note_diff_license": "NB: utestengelsen over var tilegnet en annen <code>license</code>, dette betyr at en eller flere av dine identifikatorer/maskinvare-ID'er er assosiert med den utestengelsen."
+        }
+    },
+    "whitelist_messages": {
+        "admin_only": {
+            "mode_title": "Denne serveren er i <strong>kun-Admin</strong> modus.",
+            "insufficient_ids": "Du har ingen <code>discord</code> eller <code>fivem</code> identifikatorer, du trenger minst en av dem for at det skal kunne valideres om du er en txAdmin administrator.",
+            "deny_message": "Dine identifikatorer er ikke tilknyttet en txAdmin administrator."
+        },
+        "guild_member": {
+            "mode_title": "Denne serveren er i <strong>Discord server Medlem Whitelist</strong> modus.",
+            "insufficient_ids": "Du har ingen <code>discord</code> identifikator, den er nødvendig for å validere at du er medlem av vår Discord server. Venligst åpne Discord Desktop applikasjonen og prøv igjen (web versjonen vil ikke funke).",
+            "deny_title": "Du må være et medlem av våres discord server får å kunne koble deg til serveren.",
+            "deny_message": "Vennligst bli medlem av discord serveren %{guildname} og prøv igjen."
+        },
+        "guild_roles": {
+            "mode_title": "Denne serveren er i <strong>Discord Rolle Whitelist</strong> modus.",
+            "insufficient_ids": "Du har ingen <code>discord</code> identifikator, den er nødvendig for å validere at du er medlem av vår Discord server. Venligst åpne Discord Desktop applikasjonen og prøv igjen (web versjonen vil ikke funke).",
+            "deny_notmember_title": "Du må være et medlem av våres discord server får å kunne koble deg til serveren.",
+            "deny_notmember_message": "Vennligst bli medlem av discord serveren %{guildname}, få tak i en av de påkrevde rollene og prøv igjen.",
+            "deny_noroles_title": "Du mangler en påkrevd whitelist rolle for å kunne spille på denne serveren.",
+            "deny_noroles_message": "For å spille på denne serveren trenger du minst en av whitelist rollene i discord serveren %{guildname}."
+        },
+        "approved_license": {
+            "mode_title": "Denne serveren er i <strong>Lisens Whitelist</strong> modus.",
+            "insufficient_ids": "Du har ingen <code>license</code> identifikator, noe som betyr at serveren har <code>sv_lan</code> aktivert. Vist du er eieren av denne serveren kan du deaktivene denne i <code>server.cfg</code> filen.",
+            "deny_title": "Du er ikke whitelisted til å kunne spille på denne serveren.",
+            "request_id_label": "Forespørsels ID"
+        }
+    },
+    "server_actions": {
+        "restarting": "serveren restarter (%{reason}).",
+        "restarting_discord": "**%{servername}** restarter (%{reason}).",
+        "stopping": "Serveren slår seg av (%{reason}).",
+        "stopping_discord": "**%{servername}** slår seg av (%{reason}).",
+        "spawning_discord": "**%{servername}** starter opp."
+    },
+    "nui_warning": {
+        "title": "ADVARSEL",
+        "warned_by": "Advart av:",
+        "stale_message": "Denne advarselen ble utgitt før du koblet deg til serveren.",
+        "dismiss_key": "MELLOMROM",
+        "instruction": "Hold %{key} i %{smart_count} sekund for å fjerne denne meldingen. |||| Hold %{key} i %{smart_count} sekunder for å fjerne denne meldingen."
+    },
+    "nui_menu": {
+        "misc": {
+            "help_message": "txAdmin Menu ble aktivert, skriv /tx for å åpne den.\nDu kan også binde en tast [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
+            "menu_not_admin": "Dine identifikatorer er ikke tilknyttet noen administratorer registrert på txAdmin.\nVist du er registrert inne på txAdmin, gå til Admin Manager og sjekk at identifikatorene dine er lagret.",
+            "menu_auth_failed": "txAdmin Menu autentisering mislyktes grunnet: %{reason}",
+            "no_perms": "Du har ikke tillatelse til å gjøre dette.",
+            "unknown_error": "Det oppstod en ukjent feil.",
+            "not_enabled": "txAdmin Menu er ikke aktivert! Du kan aktivere menyen inne på instillinger på txAdmin siden.",
+            "announcement_title": "Server Kunngjøring av %{author}:",
+            "directmessage_title": "DM fra admin %{author}:",
+            "dialog_empty_input": "Du må fylle inn feltet.",
+            "onesync_error": "Dette valget krevet at OneSync er aktivert."
+        },
+        "frozen": {
+            "froze_player": "Du har fryst spilleren!",
+            "unfroze_player": "Du har unfryst spilleren!",
+            "was_frozen": "Du har blitt fryst av en server admin!"
+        },
+        "common": {
+            "cancel": "Avbryt",
+            "submit": "Bekreft",
+            "error": "Det oppstod en feil",
+            "copied": "Kopiert til utklippstavlen."
+        },
+        "page_main": {
+            "tooltips": {
+                "tooltip_1": "Bruk %{key} til å bytte fane & piltastene til å navigere menyen",
+                "tooltip_2": "Noen meny valg har undervalg som kan velges ved bruk av venstre & høyre piltast"
+            },
+            "player_mode": {
+                "title": "Spillermodus",
+                "noclip": {
+                    "title": "NoClip",
+                    "label": "Skrur på/av noclip, lar deg fly igjennom vegger og andre objekter",
+                    "success": "NoClip aktivert"
+                },
+                "godmode": {
+                    "title": "Gudmodus",
+                    "label": "Skrur på/av gudmodus, beskyter deg imot å ta skade",
+                    "success": "Gudmodus aktivert"
+                },
+                "superjump": {
+                    "title": "Superhopp",
+                    "label": "Skrur på/av superhopping, karakteren din vil også løpe raskt",
+                    "success": "Superhopping aktivert"
+                },
+                "normal": {
+                    "title": "Normal",
+                    "label": "Retuner til normal spillermodus",
+                    "success": "Du returnerte til normal spillermodus."
+                }
+            },
+            "teleport": {
+                "title": "Teleportering",
+                "generic_success": "Du ble sendt in i det sorte hullet!",
+                "waypoint": {
+                    "title": "Markør",
+                    "label": "Teleporter til markøren din på kartet",
+                    "error": "Du har ingen markør på kartet."
+                },
+                "coords": {
+                    "title": "Koordinater",
+                    "label": "Teleporter til de spesifiserte koordinatene",
+                    "dialog_title": "Teleporter",
+                    "dialog_desc": "Angi koordinatene i et x, y, z format for å teleportere.",
+                    "dialog_error": "Ugylidge koordinater. Du må bruke det følgende formatet: 111, 222, 33"
+                },
+                "back": {
+                    "title": "Tilbake",
+                    "label": "Retunerer deg til lokasjonen din før du siste teleporterte",
+                    "error": "Du har ingen lokasjon å dra tilbake til!"
+                },
+                "copy": {
+                    "title": "Kopier Koordinater",
+                    "label": "Kopier dine nåværende koordinater til utklippstavlen"
+                }
+            },
+            "vehicle": {
+                "title": "Kjøretøy",
+                "not_in_veh_error": "Du er ikke i et kjøretøy!",
+                "spawn": {
+                    "title": "Spawn",
+                    "label": "Spawn et kjøretøy basert på model navnet",
+                    "dialog_title": "Spawn kjøretøy",
+                    "dialog_desc": "Skriv inn model navnet til kjøretøyet du ønsker å spawne.",
+                    "dialog_success": "Kjøretøy spawned!",
+                    "dialog_error": "Det finnes ingen kjøretøy med model navn '%{modelName}'!",
+                    "dialog_info": "Forsøker å spawne %{modelName}."
+                },
+                "fix": {
+                    "title": "Reparer",
+                    "label": "Reparer kjøretøyet ditt til full helse",
+                    "success": "Kjøretøyet ble reparert!"
+                },
+                "delete": {
+                    "title": "Slett",
+                    "label": "Sletter kjøretøyet spilleren er inni",
+                    "success": "Kjøretøyet ble slettet!"
+                },
+                "boost": {
+                    "title": "Boost",
+                    "label": "Boost bilen får å oppnå maks moro (og kanskje fart)",
+                    "success": "Kjøretøyet ble boosted!",
+                    "already_boosted": "Dette kjøretøyet er allerede boosted.",
+                    "unsupported_class": "Denne kjøretøyklassen er ikke støttet.",
+                    "redm_not_mounted": "Du kan kun booste når du sitter på en hest."
+                }
+            },
+            "heal": {
+                "title": "Gjenoppliv",
+                "myself": {
+                    "title": "Meg selv",
+                    "label": "Vil helbrede deg selv",
+                    "success_0": "Helbredet helt opp!",
+                    "success_1": "Du skal føle deg bedre nå!",
+                    "success_2": "Helbredet fullt ut!",
+                    "success_3": "Au au'ene ble fikset!"
+                },
+                "everyone": {
+                    "title": "Alle",
+                    "label": "Vil helbrede og gjenopplive alle spillere",
+                    "success": "Helbredet og gjenopplivet alle spillere."
+                }
+            },
+            "announcement": {
+                "title": "Utsend en Kunngjøring",
+                "label": "Utsend en kunngjøring til alle tilkoblede spillere.",
+                "dialog_desc": "Skriv inn meldingen du ønsker å sende til alle spillerene.",
+                "dialog_placeholder": "Kunngjøringen din...",
+                "dialog_success": "Utsender kunngjøring."
+            },
+            "clear_area": {
+                "title": "Tilbakestill Omeråde",
+                "label": "Tilbakestill et spesefikt omeråde",
+                "dialog_desc": "Skriv in radiusen du ønsker å tilbakestill objektene i (0-300). Dette vil ikke fjerne server-spawned objekter.",
+                "dialog_success": "Tilbakestiller område med en radius av %{radius}m",
+                "dialog_error": "Ugyldig radius. Prøv igjen."
+            },
+            "player_ids": {
+                "title": "Skru på/av Spiller ID'er",
+                "label": "Skru på/av spiller ID'er (og annen info) over hodet på spillere som er i nærheten",
+                "alert_show": "NetId'er vises nå på spillere i nærheten.",
+                "alert_hide": "NetId'er vises ikke lenger på spillere i nærheten."
+            }
+        },
+        "page_players": {
+            "misc": {
+                "online_players": "Online Spillere",
+                "players": "Spillere",
+                "search": "Søk",
+                "zero_players": "Ingen spillere ble funnet."
+            },
+            "filter": {
+                "label": "Filtrer etter",
+                "no_filter": "Ingen Filter",
+                "is_admin": "Er Admin",
+                "is_injured": "Er Skadet / Død",
+                "in_vehicle": "I Kjøretøy"
+            },
+            "sort": {
+                "label": "Sorter etter",
+                "distance": "Avstand",
+                "id": "ID",
+                "joined_first": "Tilkoblet Først",
+                "joined_last": "Tilkoblet Sist",
+                "closest": "Nærmeste",
+                "farthest": "Lengst Vekke"
+            },
+            "card": {
+                "health": "%{percentHealth}% helse"
+            }
+        },
+        "player_modal": {
+            "misc": {
+                "error": "Det oppstod en feil under henting av brukerinformasjonen. Feilkoden vises under:",
+                "target_not_found": "Kunne ikke finne en tilkoblet spiller med ID eller brukernavn %{target}"
+            },
+            "tabs": {
+                "actions": "Handlinger",
+                "info": "Info",
+                "ids": "ID'er",
+                "history": "Historikk",
+                "ban": "Utesteng"
+            },
+            "actions": {
+                "title": "Spiller Handlinger",
+                "command_sent": "Kommando sendt!",
+                "moderation": {
+                    "title": "Moderering",
+                    "options": {
+                        "dm": "DM",
+                        "warn": "Advarsel",
+                        "kick": "Spark Ut",
+                        "set_admin": "Gi Admin"
+                    },
+                    "dm_dialog": {
+                        "title": "Direkte Melding",
+                        "description": "Hva er grunnen til å gi en direkte melding til denne spilleren?",
+                        "placeholder": "Melding...",
+                        "success": "Direkte meldingen ble sendt!"
+                    },
+                    "warn_dialog": {
+                        "title": "Advarsel",
+                        "description": "Hva er grunnen til å gi en personlig advarsel til denne spilleren?",
+                        "placeholder": "Melding...",
+                        "success": "Spilleren ble advart!"
+                    },
+                    "kick_dialog": {
+                        "title": "Spark Ut",
+                        "description": "Hva er grunnlaget for å sparke ut denne spilleren?",
+                        "placeholder": "Grunnlag...",
+                        "success": "Spilleren ble sparket ut!"
+                    }
+                },
+                "interaction": {
+                    "title": "Interaksjoner",
+                    "options": {
+                        "heal": "Gjenoppliv",
+                        "go_to": "Dra til",
+                        "bring": "Hent",
+                        "spectate": "Tilskue",
+                        "toggle_freeze": "Frys"
+                    },
+                    "notifications": {
+                        "heal_player": "Gjenoppliver spiller",
+                        "tp_player": "Teleporterer til spiller",
+                        "bring_player": "Henter spiller",
+                        "spectate_failed": "Fant ikke lenger spilleren. Går ut av tilskuer-modus.",
+                        "spectate_yourself": "Du kan ikke tilskue deg selv.",
+                        "freeze_yourself": "Du kan ikke fryse deg selv.",
+                        "spectate_cycle_failed": "Det er ingen flere spillere å tilskue."
+                    }
+                },
+                "troll": {
+                    "title": "Troll",
+                    "options": {
+                        "drunk": "Gjør Spiller Beruset",
+                        "fire": "Sett Spiller i Brann",
+                        "wild_attack": "Villt angrep"
+                    }
+                }
+            },
+            "info": {
+                "title": "Spiller informasjon",
+                "session_time": "Sesjonstid",
+                "play_time": "Spilletid",
+                "joined": "Tilkoblet",
+                "whitelisted_label": "Whitelisted",
+                "whitelisted_notyet": "nei",
+                "btn_wl_add": "ADD WL",
+                "btn_wl_remove": "REMOVE WL",
+                "btn_wl_success": "Whitelist status endret.",
+                "log_label": "Logg",
+                "log_empty": "Ingen utestengelser/advarsler ble funnet.",
+                "log_ban_count": "%{smart_count} utestengelse |||| %{smart_count} utestengelser",
+                "log_warn_count": "%{smart_count} advarsel |||| %{smart_count} advarsler",
+                "log_btn": "DETALJER",
+                "notes_placeholder": "Notater på denne spilleren...",
+                "notes_changed": "Spiller notater endret."
+            },
+            "ids": {
+                "current_ids": "Nåværende Identifikatorer",
+                "previous_ids": "Tidligere Identifikatorer",
+                "all_hwids": "Alle Maskinvare-ID'er"
+            },
+            "history": {
+                "title": "Relatert historikk",
+                "btn_revoke": "FJERN",
+                "revoked_success": "Handling fjernet!",
+                "banned_by": "UTESTENGT av %{author}",
+                "warned_by": "ADVART av %{author}",
+                "revoked_by": "Fjernet av %{author}.",
+                "expired_at": "Utløpte den %{date}.",
+                "expires_at": "Utløper den %{date}."
+            },
+            "ban": {
+                "title": "Utesteng spiller",
+                "reason_placeholder": "Grunnlag",
+                "reason_required": "Et Grunnlag er pålagt.",
+                "duration_placeholder": "Varighet",
+                "success": "Spiller utestengt!",
+                "hours": "timer",
+                "days": "dager",
+                "weeks": "uker",
+                "months": "måneder",
+                "permanent": "Permanent",
+                "custom": "Egendefinert",
+                "helper_text": "Venligst spesifiser varigheten",
+                "submit": "Utesteng"
+            }
+        }
+    }
+}
