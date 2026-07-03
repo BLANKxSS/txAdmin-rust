@@ -365,11 +365,8 @@ if (hostVars.DEFAULT_ACCOUNT) {
         ]);
     }
     if (password && !bcryptRegex.test(password)) {
-        fatalError.GlobalData(23, [
-            'Invalid default account password.',
-            'Expected bcrypt hash.',
-            ...errArr,
-        ]);
+        //Plaintext password: hash it at boot so launcher scripts don't need bcrypt tooling
+        password = GetPasswordHash(password);
     }
     if (!fivemId && !password) {
         fatalError.GlobalData(24, [

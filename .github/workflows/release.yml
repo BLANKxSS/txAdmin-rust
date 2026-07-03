@@ -53,7 +53,7 @@ jobs:
           mkdir -p staging/txAdmin-rust
           cp -r dist staging/txAdmin-rust/dist
           cp -r rust-plugins staging/txAdmin-rust/rust-plugins
-          cp README.md LICENSE start-txadmin.example.ps1 staging/txAdmin-rust/
+          cp README.md LICENSE start-txadmin.ps1 START-TXADMIN.bat staging/txAdmin-rust/
           cd staging && zip -qr "../txAdmin-rust-v${{ steps.version.outputs.version }}.zip" txAdmin-rust
 
       - name: Create release
@@ -68,7 +68,7 @@ jobs:
           body: |
             Full-featured web panel to manage & monitor your Rust dedicated server.
 
-            **Install:** download the zip below, extract, edit `start-txadmin.example.ps1`
-            (paths + admin account), rename it to `start-txadmin.ps1`, and run it.
+            **Install:** download the zip below, extract, and double-click `START-TXADMIN.bat` —
+            a guided first-run setup detects your Rust server folder and creates your admin account.
             Requires Node.js 22+ and a Rust dedicated server with Oxide/uMod.
             See the [README](https://github.com/${{ github.repository }}#install) for details.

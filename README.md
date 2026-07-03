@@ -36,8 +36,15 @@ no FXServer, no FiveM.
 
 ### From a release (recommended)
 
-Download the latest zip from [Releases](https://github.com/BLANKxSS/txAdmin-rust/releases),
-extract it anywhere, then create a launcher script (see below) and run it.
+1. Download the latest zip from [Releases](https://github.com/BLANKxSS/txAdmin-rust/releases) and extract it anywhere
+2. Double-click **`START-TXADMIN.bat`**
+3. The first-run setup auto-detects your Rust server folder (or asks for it), creates your
+   admin username/password (auto-generates one if you leave it empty), and picks the panel port
+4. Open `http://127.0.0.1:40120` and log in — done. Your answers are saved to
+   `txadmin.config.json`; delete that file to rerun setup
+
+From then on, `START-TXADMIN.bat` is a true one-click start. Set your RCON password and
+ports in **Settings → Server** — txAdmin spawns and supervises the Rust server itself.
 
 ### From source
 
@@ -46,23 +53,21 @@ git clone https://github.com/BLANKxSS/txAdmin-rust.git
 cd txAdmin-rust
 npm install
 npm run build
+.\START-TXADMIN.bat
 ```
 
-### Launcher script
+<details>
+<summary>Advanced: configure via environment variables instead</summary>
 
 ```powershell
-# start-txadmin.ps1 (adjust paths/ports)
 $env:TXHOST_DATA_PATH = 'C:\rust\txData'        # where txAdmin stores its profile/database
 $env:TXHOST_SERVER_PATH = 'C:\rust\server'      # folder containing RustDedicated.exe
 $env:TXHOST_TXA_PORT = '40120'                  # web panel port
-# master admin account (username::bcrypt-hash) - generate a hash with:
-#   node -e "console.log(require('bcryptjs').hashSync('YOUR_PASSWORD', 10))"
-$env:TXHOST_DEFAULT_ACCOUNT = 'admin::$2b$10$REPLACE_WITH_YOUR_BCRYPT_HASH'
+# master admin account: username::password (plaintext is hashed at boot) or username::bcrypt-hash
+$env:TXHOST_DEFAULT_ACCOUNT = 'admin::YOUR_PASSWORD'
 node .\dist\core\index.js
 ```
-
-Then open `http://127.0.0.1:40120`, log in, and set your server folder, ports, and RCON
-password in **Settings → Server**. txAdmin spawns and supervises the Rust server itself.
+</details>
 
 ### Optional in-game plugins
 

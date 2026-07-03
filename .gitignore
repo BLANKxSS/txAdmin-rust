@@ -2,6 +2,8 @@
 db/*
 cache/*
 dist/*
+txadmin.config.json
+txData/
 .reports/*
 license_report/*
 .tsc/*
