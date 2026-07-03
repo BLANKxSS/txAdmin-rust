@@ -5,6 +5,7 @@ import type { InjectedTxConsts, ThemeType } from '@shared/otherTypes';
 import { txEnv, txDevEnv, txHostConfig } from "@core/globalData";
 import { AuthedCtx, CtxWithVars } from "./ctxTypes";
 import consts from "@shared/consts";
+import { TxConfigState } from "@shared/enums";
 import consoleFactory from '@lib/console';
 import { AuthedAdminType, checkRequestAuth } from "./authLogic";
 import { isString } from "@modules/CacheStore";
@@ -126,6 +127,7 @@ export default async function getReactIndex(ctx: CtxWithVars | AuthedCtx) {
         isWebInterface: ctx.txVars.isWebInterface,
         showAdvanced: (txDevEnv.ENABLED || console.isVerbose),
         hasMasterAccount: txCore.adminStore.hasAdmins(true),
+        isConfigured: txManager.configState === TxConfigState.Ready,
         defaultTheme: tmpDefaultTheme,
         customThemes: tmpCustomThemes.map(({ name, isDark }) => ({ name, isDark })),
         providerLogo: txHostConfig.providerLogo,

@@ -52,8 +52,10 @@ export default () => {
     router.post('/adminManager/getModal/:modalType', webAuthMw, routes.adminManager_getModal);
     router.post('/adminManager/:action', apiAuthMw, routes.adminManager_actions);
 
-    //Settings
+    //Settings & Setup
     router.post('/setup/:action', apiAuthMw, routes.setup_post);
+    router.post('/serverInstaller/start', apiAuthMw, routes.serverInstaller_start);
+    router.get('/serverInstaller/progress', apiAuthMw, routes.serverInstaller_progress);
     router.get('/settings/configs', apiAuthMw, routes.settings_getConfigs);
     router.post('/settings/configs/:card', apiAuthMw, routes.settings_saveConfigs);
     router.get('/settings/banTemplates', apiAuthMw, routes.settings_getBanTemplates);

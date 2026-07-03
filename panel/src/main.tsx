@@ -79,6 +79,13 @@ export function AuthContextSwitch() {
 
     useEffect(() => {
         if (isAuthenticated) {
+            //Redirect to setup if server is not configured
+            if (window.txConsts.hasMasterAccount && !window.txConsts.isConfigured && !window.location.pathname.startsWith('/setup')) {
+                console.log('Server not configured. Redirecting to setup page.');
+                window.history.replaceState(null, '', '/setup');
+                return;
+            }
+
             //Replace the current URL with the redirect path if it exists and is valid
             const urlParams = new URLSearchParams(window.location.search);
             const redirectPath = urlParams.get('r');

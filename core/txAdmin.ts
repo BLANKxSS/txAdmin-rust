@@ -13,6 +13,7 @@ import Metrics from '@modules/Metrics';
 import Translator from '@modules/Translator';
 import WebServer from '@modules/WebServer';
 import RustRcon from '@modules/RustRcon';
+import RustInstaller from '@modules/RustInstaller';
 import FxPlayerlist from '@modules/FxPlayerlist';
 import Database from '@modules/Database';
 import CacheStore from '@modules/CacheStore';
@@ -35,6 +36,7 @@ export type TxCoreType = {
     fxRunner: FxRunner;
     fxScheduler: FxScheduler;
     rustRcon: RustRcon;
+    rustInstaller: RustInstaller;
 
     //Other
     discordBot: DiscordBot;
@@ -105,6 +107,7 @@ export default function bootTxAdmin() {
     _txCore.metrics = startModule(Metrics);
     _txCore.fxPlayerlist = startModule(FxPlayerlist);
     _txCore.cacheStore = startModule(CacheStore);
+    _txCore.rustInstaller = startModule(RustInstaller);
 
     //Very Low Priority
     _txCore.updateChecker = startModule(UpdateChecker);

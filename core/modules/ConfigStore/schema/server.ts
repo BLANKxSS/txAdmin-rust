@@ -5,8 +5,8 @@ import { SYM_FIXER_DEFAULT, SYM_FIXER_FATAL } from "@lib/symbols";
 
 const dataPath = typeDefinedConfig({
     name: 'Server Data Path',
-    default: 'D:/RustServer/server',
-    validator: z.string().min(1),
+    default: '', //empty = not set up yet, triggers the setup wizard
+    validator: z.string(),
     fixer: SYM_FIXER_FATAL,
 });
 

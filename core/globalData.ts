@@ -223,7 +223,7 @@ const txaPort = handleMultiVar(
     hostVars.TXA_PORT,
     zapVars?.txAdminPort,
     nativeVars.txAdminPort,
-) ?? 40120;
+) ?? 38015;
 
 //fxserver port
 const fxsPort = handleMultiVar(

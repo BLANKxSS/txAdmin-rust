@@ -12,6 +12,7 @@ import ProcessManager, { ChildProcessStateInfo } from './ProcessManager';
 import ConsoleLineEnum from '@modules/Logger/FXServerLogger/ConsoleLineEnum';
 import { txHostConfig } from '@core/globalData';
 import path from 'node:path';
+import fs from 'node:fs';
 const console = consoleFactory('FxRunner');
 const genMutex = customAlphabet(dict49, 5);
 
@@ -539,13 +540,25 @@ export default class FxRunner {
 
 
     /**
-     * True if both the serverDataPath and cfgPath are configured
+     * True if the server is set up: dataPath/cfgPath configured AND the server
+     * folder actually contains the server executable. The folder check makes a
+     * fresh install (whose dataPath is still the schema default) show the setup
+     * wizard instead of failing to spawn.
      */
     public get isConfigured() {
-        return typeof txConfig.server.dataPath === 'string'
-            && txConfig.server.dataPath.length > 0
-            && typeof txConfig.server.cfgPath === 'string'
-            && txConfig.server.cfgPath.length > 0;
+        if (
+            typeof txConfig.server.dataPath !== 'string'
+            || txConfig.server.dataPath.length === 0
+            || typeof txConfig.server.cfgPath !== 'string'
+            || txConfig.server.cfgPath.length === 0
+        ) {
+            return false;
+        }
+        try {
+            return fs.existsSync(path.join(txConfig.server.dataPath, txConfig.server.serverExe));
+        } catch {
+            return false;
+        }
     }
 
 

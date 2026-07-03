@@ -38,6 +38,8 @@ export { default as masterActions_actions } from './masterActions/actions';
 export { default as setup_get } from './setup/get';
 export { default as setup_post } from './setup/post';
 
+export { default as serverInstaller_start, serverInstaller_progress } from './serverInstaller';
+
 export { default as fxserver_commands } from './fxserver/commands';
 export { default as fxserver_controls } from './fxserver/controls';
 export { default as fxserver_downloadLog } from './fxserver/downloadLog';

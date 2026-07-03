@@ -73,8 +73,8 @@ if (-not (Test-Path -LiteralPath $ConfigFile)) {
     }
 
     # 3) Panel port
-    $port = Read-Host 'Web panel port [40120]'
-    if (-not $port) { $port = '40120' }
+    $port = Read-Host 'Web panel port [38015]'
+    if (-not $port) { $port = '38015' }
 
     @{
         serverPath = $serverPath

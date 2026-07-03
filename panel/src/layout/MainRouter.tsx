@@ -25,6 +25,7 @@ import AdvancedPage from "@/pages/AdvancedPage";
 import PluginsPage from "@/pages/Plugins/PluginsPage";
 import PluginsBrowsePage from "@/pages/Plugins/PluginsBrowsePage";
 import OxideGroupsPage from "@/pages/OxideGroups/OxideGroupsPage";
+import SetupPage from "@/pages/Setup/SetupPage";
 
 
 type RouteType = {
@@ -147,6 +148,11 @@ const allRoutes: RouteType[] = [
     },
 
     //No nav routes
+    {
+        path: '/setup',
+        title: 'Server Setup',
+        Page: <SetupPage />
+    },
     {
         path: '/settings/ban-templates',
         title: 'Ban Templates',

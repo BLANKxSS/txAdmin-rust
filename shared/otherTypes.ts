@@ -47,6 +47,7 @@ export type InjectedTxConsts = {
     isWebInterface: boolean;
     showAdvanced: boolean;
     hasMasterAccount: boolean;
+    isConfigured: boolean;
     defaultTheme: string;
     customThemes: Omit<ThemeType, 'style'>[];
     providerLogo: string | undefined;
