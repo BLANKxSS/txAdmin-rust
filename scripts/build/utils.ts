@@ -55,25 +55,33 @@ export const licenseBanner = (baseDir = '.', isBundledFile = false) => {
 
 
 /**
- * Extracts the version from the GITHUB_REF env var and detects if pre-release
- * NOTE: to run locally: `GITHUB_REF="refs/tags/v9.9.9" npm run build`
+ * Extracts the version from the TX_VERSION or GITHUB_REF env vars and detects if pre-release.
+ * NOTE: to run locally: `TX_VERSION="9.9.9" npm run build`
  */
 export const getPublishVersion = (isOptional: boolean) => {
-    const workflowRef = process.env.GITHUB_REF;
+    const workflowRef = process.env.TX_VERSION ?? process.env.GITHUB_REF;
+    const fallback = {
+        txVersion: '9.9.9-dev',
+        isPreRelease: false,
+        preReleaseExpiration: '0',
+    };
     try {
         if (!workflowRef) {
             if (isOptional) {
-                return {
-                    txVersion: '9.9.9-dev',
-                    isPreRelease: false,
-                    preReleaseExpiration: '0',
-                };
+                return fallback;
             } else {
                 throw new Error('No --tag found.');
             }
         }
-        const refRemoved = workflowRef.replace(/^(refs\/tags\/)?v/, '');
-        const parsedVersion = new SemVer(refRemoved);
+        const refRemoved = workflowRef.replace(/^(refs\/(tags|heads)\/)?v?/, '');
+        let parsedVersion;
+        try {
+            parsedVersion = new SemVer(refRemoved);
+        } catch (error) {
+            //eg. GITHUB_REF is a branch ref like refs/heads/main
+            if (isOptional) return fallback;
+            throw error;
+        }
         const isPreRelease = parsedVersion.prerelease.length > 0;
         const potentialExpiration = new Date().setUTCHours(24 * config.preReleaseExpirationDays, 0, 0, 0);
         console.log(`txAdmin version ${parsedVersion.version}.`);
