@@ -4,7 +4,6 @@ export default {
     preReleaseExpirationDays: 21,
     copy: [
         'README.md',
-        'docs/',
         'web/',
     ],
 }
