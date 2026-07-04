@@ -178,12 +178,15 @@ export const startReadyWatcher = async (cb: () => void) => {
         console.multiline(msgRes.value, chalk.bgBlue);
     }
 
-    //Opening page
-    if (txEnv.isWindows && adminMasterPin && bannerUrls[0]) {
+    //Opening the browser once per boot (Windows only). If the server still needs a
+    //master account, deep-link to the PIN page with the PIN pre-filled; otherwise root.
+    if (txEnv.isWindows && bannerUrls[0]) {
         const linkUrl = new URL(bannerUrls[0]);
-        linkUrl.pathname = '/addMaster/pin';
-        linkUrl.hash = adminMasterPin;
-        open(linkUrl.href);
+        if (adminMasterPin) {
+            linkUrl.pathname = '/addMaster/pin';
+            linkUrl.hash = adminMasterPin;
+        }
+        open(linkUrl.href).catch(() => { /* headless / no browser */ });
     }
 
     //Callback
