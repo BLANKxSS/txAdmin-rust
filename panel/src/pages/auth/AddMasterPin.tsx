@@ -75,9 +75,9 @@ export default function AddMasterPin() {
             className='w-full'
         >
             <CardHeader className="space-y-1">
-                <CardTitle className="text-3xl">No Cfx.re account linked</CardTitle>
+                <CardTitle className="text-3xl">Link your Steam account</CardTitle>
                 <CardDescription className="text-base text-muted-foreground">
-                    Type in the PIN from the terminal.
+                    Type in the PIN from the terminal, then sign in with Steam.
                 </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-2">
@@ -119,7 +119,7 @@ export default function AddMasterPin() {
             <CardFooter>
                 <Button className="w-full" disabled={disableInput}>
                     {disableInput && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    Link Account
+                    Continue to Steam
                 </Button>
             </CardFooter>
         </form>

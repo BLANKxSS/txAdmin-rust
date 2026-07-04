@@ -123,7 +123,7 @@ function RegisterForm({ fivemId, fivemName, profilePicture }: ApiAddMasterCallba
     return <form onSubmit={handleSubmit} className='w-full text-left'>
         <CardContent className="pt-6 flex flex-col gap-4">
             <div>
-                Cfx.re account
+                Steam account
                 <div className="rounded-md border bg-zinc-100 dark:bg-zinc-900 p-2 mt-2 flex flex-row justify-start items-center">
                     <Avatar
                         className="h-16 w-16 text-3xl"
@@ -177,7 +177,7 @@ function RegisterForm({ fivemId, fivemName, profilePicture }: ApiAddMasterCallba
                     htmlFor="terms"
                     className="text-sm font-medium leading-4 peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
-                    I have read and agree to the <a href="https://fivem.net/terms" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">Creator PLA</a>.
+                    I understand this Steam account will be the master admin for this server.
                 </label>
             </div>
         </CardContent>

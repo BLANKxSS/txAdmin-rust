@@ -128,6 +128,12 @@ export const parseLaxIdsArrayInput = (fullInput: string) => {
  */
 export const getIdFromOauthNameid = (nameid: string) => {
     try {
+        //Steam: nameid is a raw SteamID64 (17 digits) → steam:<hex>, matching the
+        //identifier format used for players elsewhere.
+        if (/^\d{17}$/.test(nameid)) {
+            return `steam:${BigInt(nameid).toString(16)}`;
+        }
+        //Cfx.re (legacy): nameid is a URL ending in /user/<id>
         const res = /\/user\/(\d{1,8})/.exec(nameid);
         //@ts-expect-error
         return `fivem:${res[1]}`;

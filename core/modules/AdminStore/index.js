@@ -4,7 +4,7 @@ import fsp from 'node:fs/promises';
 import { cloneDeep } from 'lodash-es';
 import { nanoid } from 'nanoid';
 import { txHostConfig } from '@core/globalData';
-import CfxProvider from './providers/CitizenFX.js';
+import SteamProvider from './providers/Steam.js';
 import { createHash } from 'node:crypto';
 import consoleFactory from '@lib/console.js';
 import fatalError from '@lib/fatalError.js';
@@ -80,9 +80,11 @@ export default class AdminStore {
         //Load providers
         //FIXME: pode virar um top-level singleton , não precisa estar na classe
         try {
+            //NOTE: the live login provider is Steam (OpenID 2.0). The stored admin
+            //provider key remains 'citizenfx' in the admins file for schema compat.
             this.providers = {
                 discord: false,
-                citizenfx: new CfxProvider(),
+                steam: new SteamProvider(),
             };
         } catch (error) {
             throw new Error(`Failed to load providers with error: ${error.message}`);

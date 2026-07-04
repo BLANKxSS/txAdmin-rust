@@ -4,7 +4,7 @@ import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, LogInIcon } from "lucide-react";
-import { ApiVerifyPasswordReq, ApiVerifyPasswordResp } from '@shared/authApiTypes';
+import { ApiVerifyPasswordReq, ApiVerifyPasswordResp, ApiOauthRedirectResp } from '@shared/authApiTypes';
 import { useAuth } from '@/hooks/auth';
 import { useLocation } from "wouter";
 import { fetchWithTimeout } from '@/hooks/fetch';
@@ -116,6 +116,25 @@ export default function Login() {
         }
     }
 
+    const handleSteamLogin = async () => {
+        try {
+            setIsFetching(true);
+            const data = await fetchWithTimeout<ApiOauthRedirectResp>(
+                `/auth/cfxre/redirect?origin=${encodeURIComponent(window.location.origin)}`,
+                { method: 'GET' }
+            );
+            if ('error' in data) {
+                onErrorResponse(data.error);
+            } else {
+                window.location.href = data.authUrl;
+            }
+        } catch (error) {
+            onError(error);
+        } finally {
+            setIsFetching(false);
+        }
+    }
+
     //Prefill username/password if dev pass enabled
     useEffect(() => {
         try {
@@ -204,7 +223,36 @@ export default function Login() {
                         <LogInIcon className="inline mr-2 h-4 w-4" />
                     )} Login
                 </Button>
+
+                {/* Divider */}
+                <div className="relative flex items-center">
+                    <div className="grow border-t"></div>
+                    <span className="shrink mx-3 text-xs text-muted-foreground">OR</span>
+                    <div className="grow border-t"></div>
+                </div>
+
+                {/* Steam login */}
+                <Button
+                    type="button"
+                    variant='secondary'
+                    disabled={isFetching}
+                    onClick={handleSteamLogin}
+                    className="bg-[#171a21] hover:bg-[#2a2f3a] text-white"
+                >
+                    {isFetching
+                        ? <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        : <SteamIcon className="inline mr-2 h-4 w-4" />
+                    } Sign in with Steam
+                </Button>
             </CardContent>
         </form>
+    );
+}
+
+function SteamIcon({ className }: { className?: string }) {
+    return (
+        <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M11.98 0C5.66 0 .48 4.88.02 11.1l6.44 2.66a3.4 3.4 0 0 1 1.92-.6l2.87-4.15v-.06a4.53 4.53 0 1 1 4.53 4.53h-.1l-4.09 2.92a3.42 3.42 0 0 1-6.8.5L.28 14.6A12 12 0 1 0 11.98 0zM7.54 18.21l-1.47-.61a2.57 2.57 0 0 0 4.7-.4 2.56 2.56 0 0 0-2.4-3.48c-.34 0-.67.06-.98.19l1.52.63a1.89 1.89 0 1 1-1.45 3.48zm10.5-8.63a3.02 3.02 0 1 0-6.04 0 3.02 3.02 0 0 0 6.04 0zm-5.28 0a2.27 2.27 0 1 1 4.53 0 2.27 2.27 0 0 1-4.53 0z"/>
+        </svg>
     );
 }
