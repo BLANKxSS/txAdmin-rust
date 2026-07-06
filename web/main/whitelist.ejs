@@ -546,14 +546,14 @@
 
     async function addApproval(){
         //TODO: when migrating to react, get this from the shared folder
-        const acceptedIdTypes = ['discord', 'fivem', 'license', 'license2', 'live', 'steam', 'xbl'];
+        const acceptedIdTypes = ['steam', 'discord'];
         let identifier = await txAdminPrompt({
             modalColor: 'green',
             confirmBtnClass: 'btn-green',
             title: 'Allowlist player',
             description: `Type in the Player Identifier you want to allowlist. <br>
                 This can be any of the following: <code>${acceptedIdTypes.join(', ')}</code>`, 
-            placeholder: 'discord:272800190639898628'
+            placeholder: 'steam:11000010a8611fa'
         });
         if(typeof identifier !== 'string') return;
         

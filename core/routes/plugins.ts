@@ -249,19 +249,21 @@ export async function installPlugin(ctx: AuthedCtx) {
             });
         }
 
-        const { name, url } = ctx.request.body || {};
+        const { url } = ctx.request.body || {};
 
-        // Validate name
-        if (!name || !/^[A-Za-z0-9_-]+$/.test(name)) {
+        // Validate URL: must be https and end with .cs
+        if (!url || typeof url !== 'string' || !url.startsWith('https://') || !url.endsWith('.cs')) {
             return ctx.send<GenericApiErrorResp>({
-                error: 'Invalid plugin name. Only alphanumeric characters, underscores, and hyphens allowed.',
+                error: 'Invalid plugin URL. Must be a direct https:// link to a .cs file.',
             });
         }
 
-        // Validate URL: must be https and end with .cs
-        if (!url || !url.startsWith('https://') || !url.endsWith('.cs')) {
+        // The plugin filename is derived from the URL (authoritative for the Oxide
+        // class name), not the display name which may contain spaces/punctuation.
+        const name = decodeURIComponent(url.split('/').pop() || '').replace(/\.cs$/i, '');
+        if (!name || !/^[A-Za-z0-9_.-]+$/.test(name) || name.includes('..')) {
             return ctx.send<GenericApiErrorResp>({
-                error: 'Invalid plugin URL. Must be a direct https:// link to a .cs file.',
+                error: 'Could not derive a valid plugin file name from the URL.',
             });
         }
 

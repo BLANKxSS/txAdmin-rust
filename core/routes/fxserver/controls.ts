@@ -2,8 +2,6 @@ const modulename = 'WebServer:FXServerControls';
 import { AuthedCtx } from '@modules/WebServer/ctxTypes';
 import consoleFactory from '@lib/console';
 import { ApiToastResp } from '@shared/genericApiTypes';
-import { msToShortishDuration } from '@lib/misc';
-import ConfigStore from '@modules/ConfigStore';
 const console = consoleFactory(modulename);
 
 
@@ -27,35 +25,23 @@ export default async function FXServerControls(ctx: AuthedCtx) {
 
     if (action === 'restart') {
         ctx.admin.logCommand('RESTART SERVER');
-
-        //If too much of a delay, do it async
-        const respawnDelay = txCore.fxRunner.restartSpawnDelay;
-        if (respawnDelay.ms > 10_000) {
-            txCore.fxRunner.restartServer('admin request', ctx.admin.name).catch((e) => { });
-            const durationStr = msToShortishDuration(
-                respawnDelay.ms,
-                { units: ['m', 's', 'ms'] }
-            );
-            return ctx.send<ApiToastResp>({
-                type: 'warning',
-                msg: `The server is will restart with delay of ${durationStr}.`
-            });
-        } else {
-            const restartError = await txCore.fxRunner.restartServer('admin request', ctx.admin.name);
-            if (restartError !== null) {
-                return ctx.send<ApiToastResp>({ type: 'error', md: true, msg: restartError });
-            } else {
-                return ctx.send<ApiToastResp>({ type: 'success', msg: 'The server is now restarting.' });
-            }
-        }
+        //Restarting a Rust server involves a graceful save+quit (up to ~10s) plus a
+        //respawn delay, which is longer than the HTTP timeout — do it in the background.
+        txCore.fxRunner.restartServer('admin request', ctx.admin.name).catch((e) => { });
+        return ctx.send<ApiToastResp>({
+            type: 'warning',
+            msg: 'The server is now restarting. This may take a moment.',
+        });
 
     } else if (action === 'stop') {
         if (txCore.fxRunner.isIdle) {
             return ctx.send<ApiToastResp>({ type: 'success', msg: 'The server is already stopped.' });
         }
         ctx.admin.logCommand('STOP SERVER');
-        await txCore.fxRunner.killServer('admin request', ctx.admin.name, false);
-        return ctx.send<ApiToastResp>({ type: 'success', msg: 'Server stopped.' });
+        //Graceful save+quit can take several seconds — run in the background so the
+        //request returns immediately; the panel reflects the state via websocket.
+        txCore.fxRunner.killServer('admin request', ctx.admin.name, false).catch((e) => { });
+        return ctx.send<ApiToastResp>({ type: 'warning', msg: 'The server is now stopping...' });
 
     } else if (action === 'start') {
         if (!txCore.fxRunner.isIdle) {
