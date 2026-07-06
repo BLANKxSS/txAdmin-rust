@@ -21,7 +21,7 @@ export default async function AuthGetIdentifiers(ctx: AuthedCtx) {
     if (!vaultAdmin) throw new Error('Wait, what? Where is that admin?');
     
     return ctx.send({
-        cfxreId: (vaultAdmin.providers.citizenfx) ? vaultAdmin.providers.citizenfx.identifier : '',
+        cfxreId: (vaultAdmin.providers.steam) ? vaultAdmin.providers.steam.identifier : '',
         discordId: (vaultAdmin.providers.discord) ? vaultAdmin.providers.discord.identifier : '',
     });
 };

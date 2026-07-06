@@ -192,10 +192,10 @@ export const normalAuthLogic = (
             return successResp(vaultAdmin, sessAuth.csrfToken);
         } else if (sessAuth.type === 'cfxre') {
             if (
-                typeof vaultAdmin.providers.citizenfx !== 'object'
-                || vaultAdmin.providers.citizenfx.identifier !== sessAuth.identifier
+                typeof vaultAdmin.providers.steam !== 'object'
+                || vaultAdmin.providers.steam.identifier !== sessAuth.identifier
             ) {
-                return failResp(`Cfxre identifier doesn't match for '${sessAuth.username}'.`);
+                return failResp(`Steam identifier doesn't match for '${sessAuth.username}'.`);
             }
             return successResp(vaultAdmin, sessAuth.csrfToken);
         } else {

@@ -80,7 +80,7 @@ export default async function AuthChangeIdentifiers(ctx: AuthedCtx) {
 
     //Prepare log message
     const changes: string[] = [];
-    const oldCfx = vaultAdmin.providers.citizenfx?.identifier;
+    const oldCfx = vaultAdmin.providers.steam?.identifier;
     const newCfx = citizenfxData ? citizenfxData.identifier : undefined;
     if (oldCfx !== newCfx) {
         if (!oldCfx && newCfx) {

@@ -80,8 +80,6 @@ export default class AdminStore {
         //Load providers
         //FIXME: pode virar um top-level singleton , não precisa estar na classe
         try {
-            //NOTE: the live login provider is Steam (OpenID 2.0). The stored admin
-            //provider key remains 'citizenfx' in the admins file for schema compat.
             this.providers = {
                 discord: false,
                 steam: new SteamProvider(),
@@ -164,7 +162,7 @@ export default class AdminStore {
         //Handling third party providers
         const providers = {};
         if (fivemId) {
-            providers.citizenfx = {
+            providers.steam = {
                 id: username,
                 identifier: fivemId,
                 data: {},
@@ -255,7 +253,7 @@ export default class AdminStore {
         if (this.admins === false) return [];
         const ids = [];
         for (const admin of this.admins) {
-            admin.providers.citizenfx && ids.push(admin.providers.citizenfx.identifier);
+            admin.providers.steam && ids.push(admin.providers.steam.identifier);
             admin.providers.discord && ids.push(admin.providers.discord.identifier);
         }
         return ids;
@@ -370,7 +368,7 @@ export default class AdminStore {
         if (citizenfxData) {
             const existingCitizenFX = this.getAdminByProviderUID(citizenfxData.id);
             if (existingCitizenFX) throw new Error('CitizenFX ID already taken');
-            admin.providers.citizenfx = {
+            admin.providers.steam = {
                 id: citizenfxData.id,
                 identifier: citizenfxData.identifier,
                 data: {},
@@ -422,9 +420,9 @@ export default class AdminStore {
         }
         if (typeof citizenfxData !== 'undefined') {
             if (!citizenfxData) {
-                delete this.admins[adminIndex].providers.citizenfx;
+                delete this.admins[adminIndex].providers.steam;
             } else {
-                this.admins[adminIndex].providers.citizenfx = {
+                this.admins[adminIndex].providers.steam = {
                     id: citizenfxData.id,
                     identifier: citizenfxData.identifier,
                     data: {},
@@ -546,6 +544,12 @@ export default class AdminStore {
             if (typeof x.master !== 'boolean') return true;
             if (typeof x.password_hash !== 'string' || !x.password_hash.startsWith('$2')) return true;
             if (typeof x.providers !== 'object') return true;
+            //Migrate the legacy 'citizenfx' provider key to 'steam' (Rust uses Steam login)
+            if (x.providers.citizenfx && !x.providers.steam) {
+                x.providers.steam = x.providers.citizenfx;
+                delete x.providers.citizenfx;
+                hasMigration = true;
+            }
             const providersTest = Object.keys(x.providers).some((y) => {
                 if (!Object.keys(this.providers).includes(y)) return true;
                 if (typeof x.providers[y].id !== 'string' || x.providers[y].id.length < 3) return true;

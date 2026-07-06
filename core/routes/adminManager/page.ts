@@ -28,8 +28,8 @@ export default async function AdminManagerPage(ctx: AuthedCtx) {
         const isSelf = ctx.admin.name.toLowerCase() === admin.name.toLowerCase();
 
         let identifiers: string[] = [];
-        if ('citizenfx' in admin.providers && typeof admin.providers.citizenfx?.identifier === 'string') {
-            identifiers.push(admin.providers.citizenfx.identifier);
+        if ('steam' in admin.providers && typeof admin.providers.steam?.identifier === 'string') {
+            identifiers.push(admin.providers.steam.identifier);
         }
 
         if ('discord' in admin.providers && typeof admin.providers.discord?.identifier === 'string') {

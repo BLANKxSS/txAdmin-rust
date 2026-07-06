@@ -95,7 +95,7 @@ export default async function AdminManagerGetModal(ctx: AuthedCtx) {
     const renderData = {
         isNewAdmin: false,
         username: admin.name,
-        citizenfx_id: (admin.providers.citizenfx) ? admin.providers.citizenfx.id : '',
+        citizenfx_id: (admin.providers.steam) ? admin.providers.steam.id : '',
         discord_id: (admin.providers.discord) ? admin.providers.discord.id : '',
         permsGeneral,
         permsMenu,
