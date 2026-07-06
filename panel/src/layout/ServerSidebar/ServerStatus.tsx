@@ -128,8 +128,15 @@ export default function ServerStatus() {
             serverHealthColor = 'warning';
             serverHealthDescTitle = 'Server not fully running or not accepting connections.';
         } else if (globalStatus.server.health === FxMonitorHealth.OFFLINE) {
-            serverHealthColor = 'destructive';
-            serverHealthDescTitle = 'Server is offline.';
+            if (globalStatus.runner.isChildAlive) {
+                //Process spawned but not yet answering RCON - it's booting/loading the map
+                serverHealthText = 'STARTING';
+                serverHealthColor = 'warning';
+                serverHealthDescTitle = 'Server is starting up (loading map)...';
+            } else {
+                serverHealthColor = 'destructive';
+                serverHealthDescTitle = 'Server is offline.';
+            }
         } else {
             serverHealthColor = 'destructive';
             serverHealthDescTitle = 'Unknown server status.';

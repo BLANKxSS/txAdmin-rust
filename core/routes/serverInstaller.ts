@@ -59,7 +59,7 @@ export default async function serverInstaller_start(ctx: AuthedCtx) {
     const result = txCore.rustInstaller.start(targetPath);
 
     if (result.started) {
-        console.verbose.info(`Server installation started at ${targetPath}`);
+        console.log(`Server installation started at ${targetPath}`);
         return ctx.send({
             type: 'success',
             msg: 'Rust server installation started.',

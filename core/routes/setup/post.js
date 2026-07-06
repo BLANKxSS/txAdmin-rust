@@ -41,6 +41,8 @@ export default async function SetupPost(ctx) {
     //Delegate to the specific action functions
     if (action == 'validateLocalDataFolder') {
         return await handleValidateLocalDataFolder(ctx);
+    } else if (action == 'browseFolder') {
+        return await handleBrowseFolder(ctx);
     } else if (action == 'validateCFGFile') {
         return await handleValidateCFGFile(ctx);
     } else if (action == 'save' && ctx.request.body.type == 'local') {
@@ -52,6 +54,47 @@ export default async function SetupPost(ctx) {
         });
     }
 };
+
+
+/**
+ * Lists drives (at root) or subfolders of a given path so the panel can browse
+ * the server's filesystem to pick an install/server location.
+ * @param {import('@modules/WebServer/ctxTypes').AuthedCtx} ctx
+ */
+async function handleBrowseFolder(ctx) {
+    const reqPath = typeof ctx.request.body.path === 'string' ? ctx.request.body.path.trim() : '';
+
+    //Root: enumerate available Windows drives
+    if (!reqPath) {
+        const drives = [];
+        for (let i = 67; i <= 90; i++) { //C..Z
+            const drive = `${String.fromCharCode(i)}:\\`;
+            if (fse.existsSync(drive)) drives.push({ name: drive, path: drive });
+        }
+        return ctx.send({ success: true, current: '', parent: null, folders: drives });
+    }
+
+    //List subdirectories of the requested path
+    try {
+        const normalized = path.normalize(reqPath);
+        const entries = await fsp.readdir(normalized, { withFileTypes: true });
+        const folders = entries
+            .filter((e) => {
+                try { return e.isDirectory(); } catch { return false; }
+            })
+            .map((e) => ({ name: e.name, path: path.join(normalized, e.name) }))
+            .sort((a, b) => a.name.localeCompare(b.name));
+        const parent = path.dirname(normalized);
+        return ctx.send({
+            success: true,
+            current: normalized,
+            parent: parent === normalized ? '' : parent, //'' → back to drive list
+            folders,
+        });
+    } catch (error) {
+        return ctx.send({ success: false, message: `Cannot open folder: ${error.message}` });
+    }
+}
 
 
 /**

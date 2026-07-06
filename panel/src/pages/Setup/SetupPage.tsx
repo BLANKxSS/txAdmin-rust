@@ -3,8 +3,9 @@ import { useBackendApi, ApiTimeout } from '@/hooks/fetch';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2Icon, CheckCircleIcon, AlertCircleIcon, ServerIcon, FolderIcon } from 'lucide-react';
+import { Loader2Icon, CheckCircleIcon, AlertCircleIcon, ServerIcon, FolderIcon, FolderOpenIcon } from 'lucide-react';
 import { txToast } from '@/components/TxToaster';
+import FolderPicker from './FolderPicker';
 
 type Step = 'welcome' | 'server' | 'finish';
 type ServerMode = 'install' | 'existing' | null;
@@ -17,6 +18,24 @@ interface InstallerProgress {
     percent: number;
     serverPath: string;
     log: string[];
+}
+
+function ConsoleLog({ lines }: { lines: string[] }) {
+    const boxRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        //auto-scroll to the newest line
+        if (boxRef.current) boxRef.current.scrollTop = boxRef.current.scrollHeight;
+    }, [lines]);
+    return (
+        <div
+            ref={boxRef}
+            className="bg-black text-zinc-200 rounded-md border p-3 h-64 overflow-y-auto font-mono text-xs leading-relaxed whitespace-pre-wrap"
+        >
+            {lines.length === 0
+                ? <span className="text-zinc-500">Waiting for SteamCMD output...</span>
+                : lines.map((line, idx) => <div key={idx}>{line}</div>)}
+        </div>
+    );
 }
 
 function WelcomeStep({ onNext }: { onNext: () => void }) {
@@ -51,6 +70,11 @@ function ServerStep({ onNext, onBack }: { onNext: (mode: ServerMode, path: strin
     const [error, setError] = useState<string | null>(null);
     const pollIntervalRef = useRef<NodeJS.Timeout>();
     const [progress, setProgress] = useState<InstallerProgress | null>(null);
+    //Existing-folder validation state (null = not checked yet)
+    const [existingValid, setExistingValid] = useState<boolean | null>(null);
+    const [existingChecking, setExistingChecking] = useState(false);
+    const validateTimerRef = useRef<NodeJS.Timeout>();
+    const [picker, setPicker] = useState<null | 'install' | 'existing'>(null);
 
     // API hooks for server installation
     const startInstallerApi = useBackendApi<{ started: boolean; error?: string }>({
@@ -64,6 +88,32 @@ function ServerStep({ onNext, onBack }: { onNext: (mode: ServerMode, path: strin
         path: '/serverInstaller/progress',
         throwGenericErrors: false,
     });
+
+    const validateFolderApi = useBackendApi<{ success: boolean; message?: string }>({
+        method: 'POST',
+        path: '/setup/validateLocalDataFolder',
+        throwGenericErrors: false,
+    });
+
+    //Validate the existing folder (debounced) whenever the path changes
+    useEffect(() => {
+        clearTimeout(validateTimerRef.current);
+        setExistingValid(null);
+        const folder = existingPath.trim();
+        if (!folder) return;
+        setExistingChecking(true);
+        validateTimerRef.current = setTimeout(async () => {
+            try {
+                const res = await validateFolderApi({ data: { dataFolder: folder } });
+                setExistingValid(!!res?.success);
+            } catch {
+                setExistingValid(false);
+            } finally {
+                setExistingChecking(false);
+            }
+        }, 500);
+        return () => clearTimeout(validateTimerRef.current);
+    }, [existingPath]);
 
     // Polling function
     const pollProgress = async () => {
@@ -134,39 +184,38 @@ function ServerStep({ onNext, onBack }: { onNext: (mode: ServerMode, path: strin
     }, []);
 
     if (isInstalling && progress) {
+        const stepLabels: Record<string, string> = {
+            idle: 'Preparing...',
+            steamcmd: 'Downloading SteamCMD',
+            server: 'Downloading Rust server files',
+            complete: 'Done',
+        };
+        const stepLabel = stepLabels[progress.step] ?? progress.step;
         return (
             <Card className="w-full max-w-2xl">
                 <CardHeader className="text-center">
                     <CardTitle>Installing Rust Server</CardTitle>
-                    <CardDescription>This may take a few minutes...</CardDescription>
+                    <CardDescription>Downloading via SteamCMD — this can take several minutes.</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
+                <CardContent className="space-y-4">
                     {/* Progress bar */}
                     <div className="space-y-2">
                         <div className="flex justify-between items-center">
-                            <span className="text-sm font-medium">{progress.step}</span>
-                            <span className="text-sm text-muted-foreground">{progress.percent}%</span>
+                            <span className="text-sm font-medium flex items-center gap-2">
+                                <Loader2Icon className="w-4 h-4 animate-spin" />{stepLabel}
+                            </span>
+                            <span className="text-sm font-mono text-muted-foreground">{progress.percent}%</span>
                         </div>
-                        <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
+                        <div className="w-full bg-muted rounded-full h-2.5 overflow-hidden">
                             <div
-                                className="bg-primary h-full transition-all"
+                                className="bg-primary h-full transition-all duration-500"
                                 style={{ width: `${progress.percent}%` }}
                             />
                         </div>
                     </div>
 
-                    {/* Log box */}
-                    <div className="bg-muted rounded border p-3 max-h-48 overflow-y-auto font-mono text-xs space-y-0.5">
-                        {progress.log.slice(-15).map((line, idx) => (
-                            <div key={idx} className="text-muted-foreground">
-                                {line}
-                            </div>
-                        ))}
-                    </div>
-
-                    <div className="text-center">
-                        <Loader2Icon className="w-5 h-5 animate-spin inline" />
-                    </div>
+                    {/* SteamCMD console */}
+                    <ConsoleLog lines={progress.log} />
                 </CardContent>
             </Card>
         );
@@ -206,12 +255,18 @@ function ServerStep({ onNext, onBack }: { onNext: (mode: ServerMode, path: strin
                     </div>
                     {mode === 'install' && (
                         <div className="space-y-3 mt-4 pt-4 border-t">
-                            <Input
-                                placeholder="Installation path (e.g., C:\rustserver)"
-                                value={installPath}
-                                onChange={(e) => setInstallPath(e.target.value)}
-                                disabled={isInstalling}
-                            />
+                            <div className="flex gap-2">
+                                <Input
+                                    placeholder="Installation path (e.g., C:\rustserver)"
+                                    value={installPath}
+                                    onChange={(e) => setInstallPath(e.target.value)}
+                                    disabled={isInstalling}
+                                />
+                                <Button type="button" variant="outline" size="icon" disabled={isInstalling}
+                                    onClick={() => setPicker('install')} title="Browse folders">
+                                    <FolderOpenIcon className="w-4 h-4" />
+                                </Button>
+                            </div>
                             <Button
                                 onClick={handleInstall}
                                 disabled={isInstalling || !installPath.trim()}
@@ -250,15 +305,38 @@ function ServerStep({ onNext, onBack }: { onNext: (mode: ServerMode, path: strin
                     </div>
                     {mode === 'existing' && (
                         <div className="space-y-3 mt-4 pt-4 border-t">
-                            <Input
-                                placeholder="Path to server folder (containing RustDedicated.exe)"
-                                value={existingPath}
-                                onChange={(e) => setExistingPath(e.target.value)}
-                                disabled={isInstalling}
-                            />
+                            <div className="flex gap-2">
+                                <Input
+                                    placeholder="Path to server folder (containing RustDedicated.exe)"
+                                    value={existingPath}
+                                    onChange={(e) => setExistingPath(e.target.value)}
+                                    disabled={isInstalling}
+                                />
+                                <Button type="button" variant="outline" size="icon" disabled={isInstalling}
+                                    onClick={() => setPicker('existing')} title="Browse folders">
+                                    <FolderOpenIcon className="w-4 h-4" />
+                                </Button>
+                            </div>
+                            {existingPath.trim() && (
+                                <div className="text-sm flex items-center gap-2">
+                                    {existingChecking ? (
+                                        <span className="text-muted-foreground flex items-center gap-2">
+                                            <Loader2Icon className="w-4 h-4 animate-spin" /> Checking folder...
+                                        </span>
+                                    ) : existingValid ? (
+                                        <span className="text-green-600 dark:text-green-500 flex items-center gap-2">
+                                            <CheckCircleIcon className="w-4 h-4" /> RustDedicated.exe found
+                                        </span>
+                                    ) : existingValid === false ? (
+                                        <span className="text-destructive flex items-center gap-2">
+                                            <AlertCircleIcon className="w-4 h-4" /> RustDedicated.exe not found in this folder
+                                        </span>
+                                    ) : null}
+                                </div>
+                            )}
                             <Button
                                 onClick={handleUseExisting}
-                                disabled={isInstalling || !existingPath.trim()}
+                                disabled={isInstalling || !existingValid}
                                 className="w-full"
                             >
                                 Next
@@ -275,6 +353,16 @@ function ServerStep({ onNext, onBack }: { onNext: (mode: ServerMode, path: strin
                     Back
                 </Button>
             </CardContent>
+
+            <FolderPicker
+                open={picker !== null}
+                onClose={() => setPicker(null)}
+                title={picker === 'install' ? 'Choose install location' : 'Select your server folder'}
+                onSelect={(p) => {
+                    if (picker === 'install') setInstallPath(p);
+                    else setExistingPath(p);
+                }}
+            />
         </Card>
     );
 }
