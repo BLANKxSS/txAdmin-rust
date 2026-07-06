@@ -9,6 +9,7 @@ import MainShell from './layout/MainShell.tsx';
 import { AppErrorFallback } from './components/ErrorFallback.tsx';
 import { logoutWatcher, useIsAuthenticated } from './hooks/auth.ts';
 import AuthShell from './layout/AuthShell.tsx';
+import SetupPage from './pages/Setup/SetupPage.tsx';
 import { isValidRedirectPath, redirectToLogin } from '@/lib/navigation';
 import ThemeProvider from './components/ThemeProvider.tsx';
 import { StrictMode, useEffect } from 'react';
@@ -109,6 +110,11 @@ export function AuthContextSwitch() {
             }
         }
     }, [isAuthenticated]);
+
+    //Server not configured yet → show the standalone setup wizard (no app chrome)
+    if (isAuthenticated && window.txConsts.hasMasterAccount && !window.txConsts.isConfigured) {
+        return <SetupPage />;
+    }
 
     return isAuthenticated ? <MainShell /> : <AuthShell />;
 }

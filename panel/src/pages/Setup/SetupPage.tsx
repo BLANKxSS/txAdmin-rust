@@ -409,11 +409,9 @@ export default function SetupPage() {
 
     return (
         <div className="min-h-screen flex items-center justify-center p-4 bg-muted/30">
-            <div className="w-full">
-                {step === 'welcome' && <WelcomeStep onNext={handleWelcomeNext} />}
-                {step === 'server' && <ServerStep onNext={handleServerNext} onBack={handleBack} />}
-                {step === 'finish' && <FinishStep dataFolder={dataFolder} onBack={handleBack} />}
-            </div>
+            {step === 'welcome' && <WelcomeStep onNext={handleWelcomeNext} />}
+            {step === 'server' && <ServerStep onNext={handleServerNext} onBack={handleBack} />}
+            {step === 'finish' && <FinishStep dataFolder={dataFolder} onBack={handleBack} />}
         </div>
     );
 }

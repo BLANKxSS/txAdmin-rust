@@ -60,8 +60,14 @@ export const licenseBanner = (baseDir = '.', isBundledFile = false) => {
  */
 export const getPublishVersion = (isOptional: boolean) => {
     const workflowRef = process.env.TX_VERSION ?? process.env.GITHUB_REF;
+    //Fallback (local builds without an explicit version): use the root package.json version
+    //so the panel shows the real version instead of a placeholder.
+    let pkgVersion = '0.0.0-dev';
+    try {
+        pkgVersion = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version || pkgVersion;
+    } catch { /* keep default */ }
     const fallback = {
-        txVersion: '9.9.9-dev',
+        txVersion: pkgVersion,
         isPreRelease: false,
         preReleaseExpiration: '0',
     };
