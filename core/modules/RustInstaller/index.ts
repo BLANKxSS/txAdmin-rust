@@ -252,80 +252,74 @@ export default class RustInstaller {
     }
 
     /**
-     * Install Rust server via SteamCMD
+     * Install Rust server via SteamCMD.
+     * NOTE: SteamCMD self-updates on its first run and exits with a non-zero code
+     * (commonly 7) *before* installing anything. Its exit code is therefore
+     * unreliable — we judge success by whether RustDedicated.exe actually appears,
+     * and re-run SteamCMD (which resumes the download) until it does.
      */
-    private installRustServer(targetPath: string): Promise<void> {
+    private async installRustServer(targetPath: string): Promise<void> {
+        this.currentStep = 'server';
+        this.currentPercent = 25;
+
+        const steamCmdExe = path.join(targetPath, 'steamcmd', 'steamcmd.exe');
+        const serverInstallPath = path.join(targetPath, 'server');
+        fs.mkdirSync(serverInstallPath, { recursive: true });
+        const serverExe = path.join(serverInstallPath, 'RustDedicated.exe');
+
+        const args = [
+            '+force_install_dir', serverInstallPath,
+            '+login', 'anonymous',
+            '+app_update', '258550', 'validate',
+            '+quit',
+        ];
+
+        const maxAttempts = 4;
+        let lastCode: number | null = null;
+        for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+            this.addLog(`Running SteamCMD (attempt ${attempt}/${maxAttempts})...`);
+            lastCode = await this.runSteamCmd(steamCmdExe, args, targetPath);
+
+            //Success is measured by the artifact, not the exit code
+            if (fs.existsSync(serverExe)) {
+                this.currentPercent = 100;
+                this.addLog('RustDedicated.exe is present — install OK.');
+                return;
+            }
+            this.addLog(`SteamCMD exited with code ${lastCode}; server files not complete yet, retrying...`);
+        }
+
+        throw new Error(
+            `SteamCMD did not produce RustDedicated.exe after ${maxAttempts} attempts ` +
+            `(last exit code ${lastCode}). See the log above for details.`
+        );
+    }
+
+    /**
+     * Runs SteamCMD once, streaming its output to the log, and resolves with the
+     * exit code (never rejects except on spawn failure).
+     */
+    private runSteamCmd(steamCmdExe: string, args: string[], cwd: string): Promise<number> {
         return new Promise((resolve, reject) => {
-            this.currentStep = 'server';
-            this.currentPercent = 25;
+            const proc = spawn(steamCmdExe, args, { cwd, windowsHide: true });
 
-            const steamCmdExe = path.join(targetPath, 'steamcmd', 'steamcmd.exe');
-            const serverInstallPath = path.join(targetPath, 'server');
-
-            // Ensure server install dir exists
-            fs.mkdirSync(serverInstallPath, { recursive: true });
-
-            const args = [
-                '+force_install_dir', serverInstallPath,
-                '+login', 'anonymous',
-                '+app_update', '258550', 'validate',
-                '+quit',
-            ];
-
-            this.addLog(`Spawning: ${steamCmdExe} ${args.join(' ')}`);
-
-            const proc = spawn(steamCmdExe, args, {
-                cwd: targetPath,
-                windowsHide: false,
-            });
-
-            let errorOutput = '';
-
-            proc.stdout?.on('data', (data) => {
+            const handleChunk = (data: Buffer, isErr = false) => {
                 const lines = data.toString().split('\n');
                 for (const line of lines) {
                     const trimmed = line.trim();
                     if (!trimmed) continue;
-
-                    // Log all output
-                    this.addLog(trimmed);
-
-                    // Parse progress: "Update state (0x61) downloading, progress: 42.66 (...)"
+                    this.addLog(isErr ? `[stderr] ${trimmed}` : trimmed);
                     const progressMatch = trimmed.match(/progress:\s*([\d.]+)/i);
                     if (progressMatch) {
-                        const percent = Math.min(99, Math.max(25, parseFloat(progressMatch[1])));
-                        this.currentPercent = percent;
+                        this.currentPercent = Math.min(99, Math.max(25, parseFloat(progressMatch[1])));
                     }
                 }
-            });
+            };
 
-            proc.stderr?.on('data', (data) => {
-                const text = data.toString();
-                errorOutput += text;
-                const lines = text.split('\n');
-                for (const line of lines) {
-                    const trimmed = line.trim();
-                    if (trimmed) {
-                        this.addLog(`[STDERR] ${trimmed}`);
-                    }
-                }
-            });
-
-            proc.on('close', (code) => {
-                if (code === 0) {
-                    this.currentPercent = 100;
-                    resolve();
-                } else {
-                    reject(new Error(
-                        `SteamCMD failed with exit code ${code}. ` +
-                        `Check the log above for details.`
-                    ));
-                }
-            });
-
-            proc.on('error', (error) => {
-                reject(new Error(`Failed to spawn SteamCMD: ${(error as Error).message}`));
-            });
+            proc.stdout?.on('data', (d) => handleChunk(d));
+            proc.stderr?.on('data', (d) => handleChunk(d, true));
+            proc.on('close', (code) => resolve(code ?? -1));
+            proc.on('error', (error) => reject(new Error(`Failed to spawn SteamCMD: ${(error as Error).message}`)));
         });
     }
 
