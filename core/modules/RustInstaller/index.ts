@@ -274,25 +274,79 @@ export default class RustInstaller {
             '+quit',
         ];
 
-        const maxAttempts = 4;
-        let lastCode: number | null = null;
-        for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-            this.addLog(`Running SteamCMD (attempt ${attempt}/${maxAttempts})...`);
-            lastCode = await this.runSteamCmd(steamCmdExe, args, targetPath);
+        //SteamCMD hides its progress bar when piped, so estimate percent from the
+        //growing install-folder size versus the target size in the app manifest.
+        const manifestPath = path.join(serverInstallPath, 'steamapps', 'appmanifest_258550.acf');
+        const progressPoller = setInterval(() => {
+            void this.updateInstallPercent(serverInstallPath, manifestPath);
+        }, 3000);
 
-            //Success is measured by the artifact, not the exit code
-            if (fs.existsSync(serverExe)) {
-                this.currentPercent = 100;
-                this.addLog('RustDedicated.exe is present — install OK.');
-                return;
+        try {
+            const maxAttempts = 4;
+            let lastCode: number | null = null;
+            for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+                this.addLog(`Running SteamCMD (attempt ${attempt}/${maxAttempts})...`);
+                lastCode = await this.runSteamCmd(steamCmdExe, args, targetPath);
+
+                //Success is measured by the artifact, not the exit code
+                if (fs.existsSync(serverExe)) {
+                    this.currentPercent = 100;
+                    this.addLog('RustDedicated.exe is present — install OK.');
+                    return;
+                }
+                this.addLog(`SteamCMD exited with code ${lastCode}; server files not complete yet, retrying...`);
             }
-            this.addLog(`SteamCMD exited with code ${lastCode}; server files not complete yet, retrying...`);
+            throw new Error(
+                `SteamCMD did not produce RustDedicated.exe after ${maxAttempts} attempts ` +
+                `(last exit code ${lastCode}). See the log above for details.`
+            );
+        } finally {
+            clearInterval(progressPoller);
         }
+    }
 
-        throw new Error(
-            `SteamCMD did not produce RustDedicated.exe after ${maxAttempts} attempts ` +
-            `(last exit code ${lastCode}). See the log above for details.`
-        );
+    /**
+     * Estimates install progress (25→98%) from the install-folder size vs the
+     * target size (BytesToStage) reported in the SteamCMD app manifest.
+     */
+    private async updateInstallPercent(serverInstallPath: string, manifestPath: string): Promise<void> {
+        try {
+            let target = 11 * 1024 ** 3; //~11GB fallback if manifest not ready yet
+            try {
+                const acf = await fsp.readFile(manifestPath, 'utf8');
+                const staged = Number(acf.match(/"BytesToStage"\s*"(\d+)"/)?.[1]);
+                if (staged > 0) target = staged;
+            } catch { /* manifest not written yet */ }
+
+            const size = await this.getFolderSize(serverInstallPath);
+            const pct = 25 + Math.min(73, (size / target) * 73);
+            //never let the estimate move backwards or reach 100 before verification
+            this.currentPercent = Math.max(this.currentPercent, Math.round(pct));
+        } catch { /* best-effort */ }
+    }
+
+    /**
+     * Recursively sums file sizes under a directory (tolerant of locked/removed files).
+     */
+    private async getFolderSize(dir: string): Promise<number> {
+        let total = 0;
+        let entries;
+        try {
+            entries = await fsp.readdir(dir, { withFileTypes: true });
+        } catch {
+            return 0;
+        }
+        for (const entry of entries) {
+            const full = path.join(dir, entry.name);
+            try {
+                if (entry.isDirectory()) {
+                    total += await this.getFolderSize(full);
+                } else if (entry.isFile()) {
+                    total += (await fsp.stat(full)).size;
+                }
+            } catch { /* file vanished mid-download */ }
+        }
+        return total;
     }
 
     /**

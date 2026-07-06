@@ -120,7 +120,7 @@ export default class FXServerLogger extends LoggerBase {
             this.ingest(ConsoleLineEnum.MarkerInfo, lineBreak);
         }
         //need to break line
-        const multiline = getLogDivider(`[${pid}] FXServer Starting`);
+        const multiline = getLogDivider(`[${pid}] Rust server starting`);
         for (const line of multiline.split('\n')) {
             if (!line.length) break;
             this.ingest(ConsoleLineEnum.MarkerInfo, line + '\n');

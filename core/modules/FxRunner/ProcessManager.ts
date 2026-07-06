@@ -51,7 +51,7 @@ export default class ProcessManager {
         this.mutex = props.mutex;
         this.netEndpoint = props.netEndpoint;
         this.statusCallback = props.onStatusUpdate;
-        const console = consoleFactory(`FXProc][${this.pid}`);
+        const console = consoleFactory(`RustProc][${this.pid}`);
 
         //The 'exit' event is emitted after the child process ends,
         // but the stdio streams might still be open.
@@ -59,11 +59,11 @@ export default class ProcessManager {
             this.tsExit = Date.now();
             const info = getFxChildCodeSignalString(code, signal);
             processStdioEnsureEol();
-            console.warn(`FXServer Exited (${info}).`);
+            console.warn(`Rust server exited (${info}).`);
             this.exitCallback && this.exitCallback();
             this.triggerStatusUpdate();
             if (this.tsExit - this.tsStart <= 5000) {
-                console.defer(500).warn('FXServer didn\'t start. This is not an issue with txAdmin.');
+                console.defer(500).warn('The Rust server didn\'t start. This is not an issue with txAdmin.');
             }
         });
 
@@ -74,7 +74,7 @@ export default class ProcessManager {
             this.tsClose = Date.now();
             const info = getFxChildCodeSignalString(code, signal);
             processStdioEnsureEol();
-            console.warn(`FXServer Closed (${info}).`);
+            console.warn(`Rust server closed (${info}).`);
             this.destroy();
         });
 
