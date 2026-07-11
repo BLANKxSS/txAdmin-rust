@@ -79,8 +79,8 @@ Copy from [`rust-plugins/`](rust-plugins/) into `<your server>\oxide\plugins`:
 
 | txAdmin | This fork (Rust) |
 |---|---|
-| Runs inside FXServer's Node runtime | Standalone Node app |
-| stdin/fd3 pipes to FXServer | Persistent **WebRCON** websocket |
+| Runs inside Rust Server Node runtime | Standalone Node app |
+| stdin/fd3 pipes to Rust Server | Persistent **WebRCON** websocket |
 | In-game resource pushes player events | 15s `global.status` polling + console stream parsing |
 | HTTP healthchecks + resource heartbeats | `serverinfo` RCON polling |
 | NUI (embedded Chromium) in-game menu | Oxide **CUI** plugins |
