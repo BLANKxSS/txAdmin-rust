@@ -5,8 +5,7 @@
 **A full-featured web panel to manage & monitor your Rust (the game) dedicated server**
 
 Fork of [tabarra/txAdmin](https://github.com/tabarra/txAdmin) (the FiveM server manager),
-converted to run as a **standalone Node.js app** managing **RustDedicated** via WebRCON —
-no FXServer, no FiveM.
+converted to run as a **standalone Node.js app** managing **RustDedicated** via WebRCON.
 
 </div>
 
@@ -19,9 +18,9 @@ no FXServer, no FiveM.
 - 📉 **Player Drops** — drop analytics with real disconnect reasons (player quit / timeout / kicked)
 - 📜 **Server Log** — joins, disconnects, chat messages, and deaths, streamed live
 - 🧩 **Plugins** — manage installed Oxide/uMod plugins + **Browse Plugins** catalog with the uMod API (search, sort, one-click install, hot-reload) and install-from-URL for other sources
-- 🛡️ **Groups & Permissions** — Discord-roles-style manager for Oxide groups: create groups, toggle any plugin permission, manage members; permissions auto-track loaded plugins
+- 🛡️ **Groups & Permissions** — Manage for Permissions Manager 2.1.2: create groups, toggle any plugin permission, manage members; permissions auto-track loaded plugins (https://codefling.com/plugins/permissions-manager)
 - 📊 **Dashboard** — server tick performance charts, player count history, memory, host CPU/RAM
-- 🎮 **In-game admin menu** — `/admin` opens a CUI menu (kick/ban) via the bundled `TxAdminMenu.cs` plugin
+- 🎮 **In-game admin menu** — `/admin` opens a CUI menu (kick/ban) via the bundled `TxAdminMenu.cs` plugin (KICK, BAN)
 - 📢 **Announcements** — broadcast to chat + on-screen banner via the bundled `TxAdminPanel.cs` (Magic Panel integration)
 - 🤖 **Discord bot**, admin management with granular permissions, action history, and more from upstream txAdmin
 
@@ -78,7 +77,7 @@ Copy from [`rust-plugins/`](rust-plugins/) into `<your server>\oxide\plugins`:
 
 ## How it works
 
-| txAdmin (FiveM) | This fork (Rust) |
+| txAdmin | This fork (Rust) |
 |---|---|
 | Runs inside FXServer's Node runtime | Standalone Node app |
 | stdin/fd3 pipes to FXServer | Persistent **WebRCON** websocket |
